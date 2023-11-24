@@ -12,19 +12,22 @@ open_AI_key = os.environ.get('OPENAI_API_KEY')
 openai.api_key = open_AI_key
 
 
-### Here, with some adjustments, copy-paste the code you developed for Question 1 in Assignment 3 
-##########################################################################
 
-st.text('Fixed width text')
-##########################################################################
+from langchain.document_loaders.csv_loader import CSVLoader
 
+def loadCSVFile(csv_path):
+  loader = CSVLoader(csv_path)
+  data = loader.load()
+  text = data[0].page_content
+  return text
 
-# UX goes here. You will have to encorporate some variables from the code above and make some tweaks.
+def run10times(csv_file):
+    for _ in range(10):
+      # Run the chain
+        result = chain.run(csv_file)
 
-
-
-
-# Assuming other necessary imports based on the Jupyter notebook's content
+# Print the result
+print(result)
 
 # Define the main function of the Streamlit app
 def main():
@@ -46,18 +49,11 @@ def main():
         
         # Display the analysis and recommendation
         st.markdown("### FiniBot Analysis and Recommendation")
-        st.markdown(f"**Analysis:**{analysis}")
-        st.markdown(f"**Recommendation:**{recommendation}")
+        st.markdown(f"**Analysis:**\n{analysis}")
+        st.markdown(f"**Recommendation:**\n{recommendation}")
 
 # Function to process the spreadsheet and generate analysis and recommendation
-# This is a placeholder function, you need to integrate the logic from your Jupyter notebook here.
-def process_spreadsheet(df, experience_level):
-    # Process the dataframe as per the logic in the Jupyter notebook
-    # For example, calculate total savings, monthly debt, and monthly income, etc.
-    # Then, based on these calculations and the experience level, generate the analysis and recommendation.
-    analysis = "Analysis based on the spreadsheet data."
-    recommendation = "Recommendation based on the analysis."
-    return analysis, recommendation
+
 
 if __name__ == "__main__":
     main()
