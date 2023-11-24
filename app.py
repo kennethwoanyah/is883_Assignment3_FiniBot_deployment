@@ -15,7 +15,7 @@ openai.api_key = open_AI_key
 ### Here, with some adjustments, copy-paste the code you developed for Question 1 in Assignment 3 
 ##########################################################################
 
-
+st.text('Fixed width text')
 ##########################################################################
 
 
