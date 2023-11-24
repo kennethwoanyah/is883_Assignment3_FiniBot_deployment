@@ -46,10 +46,8 @@ def main():
         
         # Display the analysis and recommendation
         st.markdown("### FiniBot Analysis and Recommendation")
-        st.markdown(f"**Analysis:**
-{analysis}")
-        st.markdown(f"**Recommendation:**
-{recommendation}")
+        st.markdown(f"**Analysis:**{analysis}")
+        st.markdown(f"**Recommendation:**{recommendation}")
 
 # Function to process the spreadsheet and generate analysis and recommendation
 # This is a placeholder function, you need to integrate the logic from your Jupyter notebook here.
