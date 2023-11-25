@@ -55,7 +55,7 @@ Here's the details provided {input}
 
 def get_llm():
     #openai_api_key = os.environ.get("OPENAI_API_KEY")
-    llm = OpenAI(api_key=openai.api_key , model="text-davinci-003", temperature=0.8, max_tokens=150)
+    llm = OpenAI(api_key = openai.api_key , model="text-davinci-003", temperature=0.8, max_tokens=150)
     return llm
 
 def setup_financial_chains(llm, level):
