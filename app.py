@@ -19,10 +19,7 @@ openai.api_key = open_AI_key
 ### Here, with some adjustments, copy-paste the code you developed for Question 1 in Assignment 3 
 ##########################################################################  
 # Function to load and process the CSV file
-def loadCSVFile(csv_file):
-    # Read the CSV file into a DataFrame
-    df = pd.read_csv(csv_file)
-
+def loadCSVFile(df):
     # Extract required fields
     savings = df['savings'].iloc[0]
     credit_card_debt = df['credit_card_debt'].iloc[0]
@@ -32,43 +29,21 @@ def loadCSVFile(csv_file):
     formatted_text = f"savings: ${savings:.2f}\ncredit card debt: ${credit_card_debt:.2f}\nincome: ${income:.2f}"
     return formatted_text
 
-##########################################################################
-
-
-# UX goes here. You will have to encorporate some variables from the code above and make some tweaks.
-
-
-
-
-# Assuming other necessary imports based on the Jupyter notebook's content
-
-# Define the main function of the Streamlit app
 def main():
     st.header("Welcome to FiniBot Financial Advisory! Please upload your financial spreadsheet. [Link to template]")
 
-    # File uploader for the spreadsheet
     uploaded_file = st.file_uploader("Upload spreadsheet", type=['csv', 'xlsx'])
     
-    # Radio button for selecting experience level
-    experience_level = st.radio("Select your experience level:", ("Novice", "Expert"))
-
-    # Display the spreadsheet if uploaded
     if uploaded_file is not None:
-        df = pd.read_csv(uploaded_file)  # Adjust this line if your spreadsheet is in a different format
-        st.dataframe(df)  # Displaying the spreadsheet
-        processed_text = loadCSVFile(uploaded_file)
-        st.text(processed_text)
+        try:
+            df = pd.read_csv(uploaded_file)
+            processed_text = loadCSVFile(df)
+            st.text(processed_text)
 
-        print(processed_text)
+            # Additional processing and display logic here...
 
-
-        # Process the spreadsheet and generate financial analysis
-        analysis, recommendation = process_spreadsheet(df, experience_level)
-        
-        # Display the analysis and recommendation
-        st.markdown("### FiniBot Analysis and Recommendation")
-        st.markdown(f"**Analysis:**{analysis}")
-        st.markdown(f"**Recommendation:**{recommendation}")
+        except Exception as e:
+            st.error("An error occurred while processing the file. Please make sure it is formatted correctly.")
 
 # Function to process the spreadsheet and generate analysis and recommendation
 # This is a placeholder function, you need to integrate the logic from your Jupyter notebook here.
