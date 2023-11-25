@@ -140,10 +140,15 @@ REMEMBER: "next_inputs" is not the original input. It is modified to contain: th
         verbose=False,
     )
 
+class StreamlitCSVLoader(CSVLoader):
+    def __init__(self, file):
+        data = file.getvalue().decode("utf-8") 
+        super().__init__(StringIO(data))
+
 def loadCSVFile(uploaded_file):
-    loader = CSVLoader(uploaded_file)
+    loader = StreamlitCSVLoader(uploaded_file) 
     data = loader.load()
-    text = data[0].page_content
+    text = data[0]["column1"]
     return text
 
 
