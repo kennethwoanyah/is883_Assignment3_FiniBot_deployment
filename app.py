@@ -184,6 +184,9 @@ def main():
     uploaded_file = st.file_uploader("Upload your financial spreadsheet", type=['csv'])
 
     if uploaded_file is not None:
+        df = pd.read_csv(uploaded_file)  # Adjust this line if your spreadsheet is in a different format
+        st.dataframe(df)  # Displaying the spreadsheet
+        
         text = loadCSVFile(uploaded_file)
         print(text+":))))))")
 
