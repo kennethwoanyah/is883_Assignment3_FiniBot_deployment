@@ -21,13 +21,12 @@ openai.api_key = open_AI_key
 
 
 def loadCSVFile(uploaded_file):
-    # Convert the uploaded file to a text stream
+    
+
+    df = pd.read_csv(uploaded_file)
     text_io = StringIO(uploaded_file.getvalue().decode("utf-8"))
 
-    # Use CSVLoader with the in-memory text stream
-    loader = CSVLoader(text_io)
-    data = loader.load()
-    text = data[0].page_content
+    text = df.to_string(index=False)
     return text
 
 # Define the main function of the Streamlit app
