@@ -144,8 +144,14 @@ def loadCSVFile(uploaded_file):
     text_io = StringIO(uploaded_file.getvalue().decode("utf-8"))
     df = pd.read_csv(text_io)
     
-    # Get the data as a plain text string without formatting
+    # Format the numbers in the DataFrame as strings with the desired format
+    for column in df.columns:
+        if df[column].dtype == 'float64':
+            df[column] = df[column].apply(lambda x: f"${x:,.2f}")
+
+    # Convert the DataFrame to a plain text string without formatting
     text = df.to_string(index=False, header=False)
+
     return text
 
 def run10times(csv_file, chain):
