@@ -143,7 +143,9 @@ REMEMBER: "next_inputs" is not the original input. It is modified to contain: th
 def loadCSVFile(uploaded_file):
     text_io = StringIO(uploaded_file.getvalue().decode("utf-8"))
     df = pd.read_csv(text_io)
-    text = df.to_string(index=False)
+    
+    # Get the data as a plain text string without formatting
+    text = df.to_string(index=False, header=False)
     return text
 
 def run10times(csv_file, chain):
