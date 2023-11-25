@@ -9,6 +9,7 @@ from langchain.chains.router import MultiPromptChain, LLMRouterChain
 from langchain.chains.router.llm_router import RouterOutputParser
 import openai
 import tempfile
+import shutil
 from langchain.document_loaders import CSVLoader
 
 
@@ -142,26 +143,23 @@ REMEMBER: "next_inputs" is not the original input. It is modified to contain: th
         verbose=False,
     )
 
+
 def loadCSVFile(uploaded_file):
-    try:
-        # Check if the file is empty
-        if uploaded_file.getvalue().strip() == "":
-            return "Uploaded file is empty."
+    # Create a temporary file
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".csv") as tmp_file:
+        # Write the content of the uploaded file to the temporary file
+        shutil.copyfileobj(uploaded_file, tmp_file)
+        tmp_file_path = tmp_file.name
 
-        # Specify the delimiter if it's not a comma, for example, a semicolon
-        df = pd.read_csv(uploaded_file, sep=',')
+    # Now use this temporary file path with CSVLoader
+    loader = CSVLoader(tmp_file_path)
+    data = loader.load()
+    text = data[0].page_content
 
-        # Extracting the values from the first row
-        savings = df.at[0, 'savings']
-        credit_card_debt = df.at[0, 'credit card debt']
-        income = df.at[0, 'income']
+    # Optionally delete the temporary file here if no longer needed
+    # os.remove(tmp_file_path)
 
-        # Formatting the output text
-        text = f"savings: {savings}\ncredit card debt: {credit_card_debt}\nincome: {income}"
-        return text
-    except Exception as e:
-        return f"Error processing CSV file: {e}"
-
+    return text
 def run10times(csv_file, chain):
     final_result = ""
     #for _ in range(10):
