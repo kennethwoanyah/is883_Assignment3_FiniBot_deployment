@@ -148,10 +148,10 @@ def loadCSVFile(uploaded_file):
 
 def run10times(csv_file, chain):
     final_result = ""
-    for _ in range(10):
-        result = chain.run(csv_file)
-        final_result += result + "\n"
-    return final_result
+    #for _ in range(10):
+    result = chain.run(csv_file)
+    #final_result += result + "\n"
+    return result
 
 def process_financial_data(text, level):
     total_savings = "0"
@@ -185,6 +185,7 @@ def main():
 
     if uploaded_file is not None:
         text = loadCSVFile(uploaded_file)
+        print(text+":))))))")
         total_savings, monthly_debt, monthly_income = process_financial_data(text, level)
 
         llm = get_llm()
