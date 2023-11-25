@@ -144,17 +144,12 @@ def loadCSVFile(uploaded_file):
     text_io = StringIO(uploaded_file.getvalue().decode("utf-8"))
     df = pd.read_csv(text_io)
     
-    # Format the numbers in the DataFrame columns as strings with the desired format
-    for column in df.columns:
-        if df[column].dtype == 'float64':
-            df[column] = df[column].apply(lambda x: f"${x:,.2f}")
+    # Format the data as "label: value" pairs
+    formatted_text = "\n".join([f"{column}: ${value:,.2f}" for column, value in df.iloc[0].items()])
 
-    # Convert the DataFrame to a plain text string without formatting
-    text = df.to_string(index=False, header=True, col_space=12)
+    return formatted_text
 
-    return text
 
-    return text
 
 def run10times(csv_file, chain):
     final_result = ""
