@@ -21,11 +21,13 @@ openai.api_key = open_AI_key
 # Function to load and process the CSV file
 # Function to load and process the CSV file
 def loadCSVFile(df):
-    # Check if the required columns are present
-    required_columns = ['savings', 'credit_card_debt', 'income']
-    missing_columns = [col for col in required_columns if col not in df.columns]
-    if missing_columns:
-        raise ValueError(f"Missing columns in the CSV file: {', '.join(missing_columns)}")
+    # Set default values for missing columns
+    default_values = {'savings': 0, 'credit_card_debt': 0, 'income': 0}
+
+    # Update df with default values for missing columns
+    for col, default in default_values.items():
+        if col not in df.columns:
+            df[col] = default
 
     # Extract required fields
     savings = df['savings'].iloc[0]
@@ -35,6 +37,7 @@ def loadCSVFile(df):
     # Format the extracted data
     formatted_text = f"savings: ${savings:.2f}\ncredit card debt: ${credit_card_debt:.2f}\nincome: ${income:.2f}"
     return formatted_text
+
 
 # Function to process the spreadsheet and generate analysis and recommendation
 def process_spreadsheet(df, experience_level):
