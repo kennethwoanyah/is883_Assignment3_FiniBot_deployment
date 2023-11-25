@@ -7,8 +7,10 @@ from langchain.prompts import PromptTemplate
 from langchain.chains import ConversationChain, LLMChain
 from langchain.chains.router import MultiPromptChain, LLMRouterChain
 from langchain.chains.router.llm_router import RouterOutputParser
+import openai
 
-
+open_AI_key = os.environ.get('OPENAI_API_KEY')
+openai.api_key = open_AI_key
 
 Output_template = """
  Format the output nicely into this template.
@@ -51,8 +53,8 @@ Here's the details provided {input}
 """ + Output_template
 
 def get_llm():
-    openai_api_key = os.environ.get("OPENAI_API_KEY")
-    llm = OpenAI(api_key=openai_api_key, model="text-davinci-003", temperature=0.8, max_tokens=150)
+    #openai_api_key = os.environ.get("OPENAI_API_KEY")
+    llm = OpenAI(api_key=openai.api_key, model="text-davinci-003", temperature=0.8, max_tokens=150)
     return llm
 
 def setup_financial_chains(llm, level):
