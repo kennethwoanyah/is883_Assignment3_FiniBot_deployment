@@ -9,12 +9,26 @@ from langchain.chains.llm import LLMChain
 from langchain.chains.router import MultiPromptChain
 from langchain.llms import OpenAI
 
+from io import StringIO
+from langchain.document_loaders.csv_loader import CSVLoader
+
 # Make sure to add your OpenAI API key in the advanced settings of Streamlit's deployment
 open_AI_key = os.environ.get('OPENAI_API_KEY')
 openai.api_key = open_AI_key
 
 # Assuming you have the LangChain and financial route setup code here
 # ... (your existing LangChain and route setup code)
+
+
+def loadCSVFile(uploaded_file):
+    # Convert the uploaded file to a text stream
+    text_io = StringIO(uploaded_file.getvalue().decode("utf-8"))
+
+    # Use CSVLoader with the in-memory text stream
+    loader = CSVLoader(text_io)
+    data = loader.load()
+    text = data[0].page_content
+    return text
 
 # Define the main function of the Streamlit app
 def main():
@@ -30,6 +44,10 @@ def main():
     if uploaded_file is not None:
         df = pd.read_csv(uploaded_file)  # Adjust this line if your spreadsheet is in a different format
         st.dataframe(df)  # Displaying the spreadsheet
+
+        text = loadCSVFile(uploaded_file)
+
+        print(text)
 
         # Process the spreadsheet and generate financial analysis
         analysis, recommendation = process_spreadsheet(df, experience_level)
