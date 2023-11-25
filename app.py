@@ -144,8 +144,12 @@ REMEMBER: "next_inputs" is not the original input. It is modified to contain: th
 
 def loadCSVFile(uploaded_file):
     try:
-        # Read the CSV file into a Pandas DataFrame
-        df = pd.read_csv(uploaded_file)
+        # Check if the file is empty
+        if uploaded_file.getvalue().strip() == "":
+            return "Uploaded file is empty."
+
+        # Specify the delimiter if it's not a comma, for example, a semicolon
+        df = pd.read_csv(uploaded_file, sep=',')
 
         # Extracting the values from the first row
         savings = df.at[0, 'savings']
@@ -156,8 +160,7 @@ def loadCSVFile(uploaded_file):
         text = f"savings: {savings}\ncredit card debt: {credit_card_debt}\nincome: {income}"
         return text
     except Exception as e:
-        raise Exception(f"Error processing CSV file: {e}")
-    
+        return f"Error processing CSV file: {e}"
 
 def run10times(csv_file, chain):
     final_result = ""
