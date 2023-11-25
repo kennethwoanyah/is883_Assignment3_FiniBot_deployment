@@ -9,6 +9,9 @@ from langchain.chains.llm import LLMChain
 from langchain.chains.router import MultiPromptChain
 from langchain.llms import OpenAI
 
+import tempfile
+
+
 from io import StringIO
 from langchain.document_loaders.csv_loader import CSVLoader
 
@@ -23,13 +26,19 @@ openai.api_key = open_AI_key
 def loadCSVFile(uploaded_file):
     
 
-       # Save the uploaded file to a temporary file
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.csv') as tmp_file:
-        tmp_file.write(uploaded_file.getvalue())
-        tmp_file_path = tmp_file.name
+    # Create a temporary file
+    tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.csv', mode='w+b')
+    # Write the uploaded file's content to the temporary file
+    tmp_file.write(uploaded_file.getvalue())
+    # Close the file to ensure it's saved
+    tmp_file_path = tmp_file.name
+    tmp_file.close()
 
     # Now read the file from the temporary location
     df = pd.read_csv(tmp_file_path)
+
+    # Clean up by deleting the temporary file
+    os.unlink(tmp_file_path)
 
     # Convert DataFrame to string (or process as needed)
     text = df.to_string(index=False)
