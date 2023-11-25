@@ -151,7 +151,7 @@ def loadCSVFile(csv_file):
     text = data[0]['page_content']  # Assuming the data is a list of dictionaries
     return text
 
-    return text
+ 
 def run10times(csv_file, chain):
     final_result = ""
     #for _ in range(10):
