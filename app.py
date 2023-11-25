@@ -11,6 +11,7 @@ import openai
 import tempfile
 from langchain.document_loaders import CSVLoader
 
+
 print(os.environ.get("OPENAI_API_KEY"))
 
 open_AI_key = os.environ.get('OPENAI_API_KEY')
@@ -143,27 +144,21 @@ REMEMBER: "next_inputs" is not the original input. It is modified to contain: th
 
 def loadCSVFile(uploaded_file):
     try:
-        # Create a temporary file
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".csv") as tmp_file:
-            # Write the content of the uploaded file to the temporary file
-            tmp_file.write(uploaded_file.getvalue())
-            tmp_file_path = tmp_file.name
+        # Read the CSV file into a Pandas DataFrame
+        df = pd.read_csv(file_like_object)
 
-        # Now use this temporary file path with CSVLoader
-        loader = CSVLoader(tmp_file_path)
-        data = loader.load()
+        # Extracting the values from the first row
+        savings = df.at[0, 'savings']
+        credit_card_debt = df.at[0, 'credit card debt']
+        income = df.at[0, 'income']
 
-        text = data[0]['page_content']  # Adjust based on actual data structure
-
-        # Clean up: Remove the temporary file
-        os.remove(tmp_file_path)
-
+        # Formatting the output text
+        text = f"savings: {savings}\ncredit card debt: {credit_card_debt}\nincome: {income}"
         return text
     except Exception as e:
-        st.error(f"Error processing file: {e}")
-        return None
-
-
+        raise Exception(f"Error processing CSV file: {e}")
+    
+    
 def run10times(csv_file, chain):
     final_result = ""
     #for _ in range(10):
