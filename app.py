@@ -8,9 +8,47 @@ from langchain.chains import ConversationChain, LLMChain
 from langchain.chains.router import MultiPromptChain, LLMRouterChain
 from langchain.chains.router.llm_router import RouterOutputParser
 
+
+
+Output_template = """
+ Format the output nicely into this template.
+
+------------
+ Summary
+------------
+
+ - Total savings:  {input}
+ - Monthly debt: {input}
+ - Monthly income: {input}
+
+------------
+ Financial situation:
+ ------------
+
+
+------------
+Recommendation:
+------------
+
+
+
+
+"""
 # Define your investment and debt templates (placeholders here)
-investment_template = "..."  # Replace with your actual investment template
-debt_template = "..."  # Replace with your actual debt template
+investment_template ="""
+You are a highly knowledgeable investment advisor. You excel at providing clear and succinct advice on financial matters. When faced with a question you're unsure about, you honestly acknowledge your uncertainty.
+advise to invest  money and provide an investment portfolio based on savings and using 5 stocks.
+Give advice based on the following details: {input}
+
+""" + Output_template
+
+
+debt_template= """
+You are a courteous and considerate debt advisor. Your approach involves tactfully and sensitively informing clients about their financial situations, avoiding any guilt-tripping. You then transition into planning mode, creating a strategy for clients to pay off their debts. This plan includes allocating 10% of their income for monthly debt payments.
+
+Here's the details provided {input}
+
+""" + Output_template
 
 def get_llm():
     openai_api_key = os.environ.get("OPENAI_API_KEY")
@@ -44,8 +82,34 @@ def setup_financial_chains(llm, level):
     Now, let's summarize your financial status.
     """
 
-    MULTI_PROMPT_ROUTER_TEMPLATE = """
-    ...  # Your MULTI_PROMPT_ROUTER_TEMPLATE content
+    MULTI_PROMPT_ROUTER_TEMPLATE = """\
+Given a raw text input to a language model select the model prompt best suited for \
+the input. You will be given the names of the available prompts and a description of \
+what the prompt is best suited for. You may also revise the original input if you \
+think that revising it will ultimately lead to a better response from the language \
+model.
+
+<< FORMATTING >>
+Return a markdown code snippet with a JSON object formatted to look like:
+```json
+{{{{
+    "destination": string \ name of the prompt to use or "DEFAULT"
+    "next_inputs": string \ a modified version of the original input. It is modified to contai only: the "savings" value, the "debt" value, the "income" value, and the "summary" provided above.
+}}}}
+```
+
+REMEMBER: "destination" MUST be one of the candidate prompt names specified below OR \
+it can be "DEFAULT" if the input is not well suited for any of the candidate prompts.
+REMEMBER: "next_inputs" is not the original input. It is modified to contain: the "savings" value, the "debt" value, the "income" value, and the "summary" provided above.
+
+<< CANDIDATE PROMPTS >>
+{destinations}
+
+<< INPUT >>
+{{input}}
+
+<< OUTPUT (must include ```json at the start of the response) >>
+<< OUTPUT (must end with ```) >>
     """
 
     prompt = financial_prompt + MULTI_PROMPT_ROUTER_TEMPLATE
