@@ -187,12 +187,14 @@ def main():
         text = loadCSVFile(uploaded_file)
         print(text+":))))))")
 
-        
+
         total_savings, monthly_debt, monthly_income = process_financial_data(text, level)
 
         llm = get_llm()
         financial_chain = setup_financial_chains(llm, level)
         result = run10times(text, financial_chain)
+
+        st.dataframe(uploaded_file)
 
         st.markdown("### Financial Summary")
         st.markdown(f"- Total savings: ${total_savings}")
