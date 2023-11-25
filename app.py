@@ -142,17 +142,27 @@ REMEMBER: "next_inputs" is not the original input. It is modified to contain: th
     )
 
 def loadCSVFile(uploaded_file):
-    # Read the CSV file into a Pandas DataFrame
-    df = pd.read_csv(uploaded_file)
+    # Check if the file is not empty
+    if uploaded_file is not None and uploaded_file.getvalue():  # Check if file is not empty
+        try:
+            # Read the CSV file into a Pandas DataFrame
+            df = pd.read_csv(uploaded_file, header=None)  # Use header=None if no header row is present
 
-    # Extracting the relevant data
-    savings = df['savings'].iloc[0]  # Replace 'savings' with the actual column name
-    credit_card_debt = df['credit_card_debt'].iloc[0]  # Replace 'credit_card_debt' with the actual column name
-    income = df['income'].iloc[0]  # Replace 'income' with the actual column name
+            # Specify column names if the CSV file doesn't have a header
+            df.columns = ['savings', 'credit_card_debt', 'income']  # Adjust these names based on your data structure
 
-    # Formatting the output text
-    text = f"savings: ${savings:.2f}\ncredit card debt: ${credit_card_debt:.2f}\nincome: ${income:.2f}"
-    return text
+            # Extracting the relevant data
+            savings = df['savings'].iloc[0]
+            credit_card_debt = df['credit_card_debt'].iloc[0]
+            income = df['income'].iloc[0]
+
+            # Formatting the output text
+            text = f"savings: ${savings:.2f}\ncredit card debt: ${credit_card_debt:.2f}\nincome: ${income:.2f}"
+            return text
+        except Exception as e:
+            return f"Error processing file: {e}"
+    else:
+        return "Uploaded file is empty or not a valid CSV."
 
 def run10times(csv_file, chain):
     final_result = ""
