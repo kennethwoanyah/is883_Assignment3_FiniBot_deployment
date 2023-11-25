@@ -9,8 +9,14 @@ from langchain.chains.router import MultiPromptChain, LLMRouterChain
 from langchain.chains.router.llm_router import RouterOutputParser
 import openai
 
+
+print(os.environ.get("OPENAI_API_KEY"))
+
 open_AI_key = os.environ.get('OPENAI_API_KEY')
 openai.api_key = open_AI_key
+
+
+
 
 Output_template = """
  Format the output nicely into this template.
