@@ -56,19 +56,9 @@ Here's the details provided {input}
 """ + Output_template  # Replace with your actual debt template
 
 def get_llm():
-    try:
-        # Initialize the LLM (Language Learning Model)
-        llm = OpenAI(api_key=openai.api_key,
-             model="text-davinci-003",
-             temperature=0.8,
-             max_tokens=150)
-
-        # Pass API key as a keyword argument
-        #llm = OpenAI(openai.api_key, model="text-davinci-003", temperature=0.8, max_tokens=150)
-        return llm
-    except Exception as e:
-        st.error(f"Failed to initialize OpenAI model: {e}")
-        return None
+    openai_api_key = os.environ.get("OPENAI_API_KEY")
+    llm = OpenAI(api_key=openai_api_key, model="text-davinci-003", temperature=0.8, max_tokens=150)
+    return llm
 
 
 def setup_financial_chains(llm, level):
