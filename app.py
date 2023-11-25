@@ -12,8 +12,12 @@ open_AI_key = os.environ.get('OPENAI_API_KEY')
 openai.api_key = open_AI_key
 
 
+
+
+
+
 ### Here, with some adjustments, copy-paste the code you developed for Question 1 in Assignment 3 
-##########################################################################
+##########################################################################  
 # Function to load and process the CSV file
 def loadCSVFile(csv_file):
     # Read the CSV file into a DataFrame
