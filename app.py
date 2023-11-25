@@ -147,12 +147,12 @@ def loadCSVFile(uploaded_file):
             df = pd.read_csv(uploaded_file)
 
             # Extract the relevant values from the DataFrame
-            savings = df['savings'][0]
-            credit_card_debt = df['credit card debt'][0]
-            income = df['income'][0]
+            total_savings = df['savings'][0]
+            monthly_debt = df['credit card debt'][0]
+            monthly_income = df['income'][0]
 
             # Format the data as desired
-            formatted_text = f"savings: ${savings:.2f}\ncredit card debt: ${credit_card_debt:.2f}\nincome: ${income:.2f}"
+            formatted_text = f"savings: ${total_savings:.2f}\ncredit card debt: ${monthly_debt:.2f}\nincome: ${monthly_income:.2f}"
 
             return formatted_text
         else:
@@ -160,6 +160,7 @@ def loadCSVFile(uploaded_file):
     except Exception as e:
         st.error(f"Error loading and formatting CSV file: {e}")
         return ""
+
 
 def run10times(csv_file, chain):
     final_result = ""
