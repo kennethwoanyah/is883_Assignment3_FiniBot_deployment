@@ -21,13 +21,13 @@ openai.api_key = open_AI_key
 # Function to load and process the CSV file
 # Function to load and process the CSV file
 def loadCSVFile(df):
-    # Set default values for missing columns
-    default_values = {'savings': 0, 'credit_card_debt': 0, 'income': 0}
+    # Convert fields to numeric, setting errors='coerce' will convert non-numeric values to NaN
+    df['savings'] = pd.to_numeric(df['savings'], errors='coerce')
+    df['credit_card_debt'] = pd.to_numeric(df['credit_card_debt'], errors='coerce')
+    df['income'] = pd.to_numeric(df['income'], errors='coerce')
 
-    # Update df with default values for missing columns
-    for col, default in default_values.items():
-        if col not in df.columns:
-            df[col] = default
+    # Fill NaN values with 0 or some default value
+    df.fillna(0, inplace=True)
 
     # Extract required fields
     savings = df['savings'].iloc[0]
