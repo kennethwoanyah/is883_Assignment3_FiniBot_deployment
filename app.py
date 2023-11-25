@@ -186,6 +186,8 @@ def main():
     if uploaded_file is not None:
         text = loadCSVFile(uploaded_file)
         print(text+":))))))")
+
+        
         total_savings, monthly_debt, monthly_income = process_financial_data(text, level)
 
         llm = get_llm()
