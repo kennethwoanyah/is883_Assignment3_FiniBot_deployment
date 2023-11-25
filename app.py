@@ -142,37 +142,17 @@ REMEMBER: "next_inputs" is not the original input. It is modified to contain: th
     )
 
 def loadCSVFile(uploaded_file):
-    try:
-        if uploaded_file is not None:
-            # Create a temporary directory to save the uploaded file
-            temp_dir = tempfile.TemporaryDirectory()
-            temp_csv_path = os.path.join(temp_dir.name, uploaded_file.name)
+    # Read the CSV file into a Pandas DataFrame
+    df = pd.read_csv(uploaded_file)
 
-            # Save the uploaded file to the temporary directory
-            with open(temp_csv_path, "wb") as f:
-                f.write(uploaded_file.read())
+    # Extracting the relevant data
+    savings = df['savings'].iloc[0]  # Replace 'savings' with the actual column name
+    credit_card_debt = df['credit_card_debt'].iloc[0]  # Replace 'credit_card_debt' with the actual column name
+    income = df['income'].iloc[0]  # Replace 'income' with the actual column name
 
-            # Load the CSV file using CSVLoader
-            loader = CSVLoader(temp_csv_path)
-            data = loader.load()
-
-            # Extract the relevant values from the data
-            total_savings = data[0].savings
-            monthly_debt = data[0].credit_card_debt
-            monthly_income = data[0].income
-
-            # Format the data as desired
-            formatted_text = f"savings: ${total_savings:.2f}\ncredit card debt: ${monthly_debt:.2f}\nincome: ${monthly_income:.2f}"
-
-            # Close and clean up the temporary directory
-            temp_dir.cleanup()
-
-            return formatted_text
-        else:
-            return "Please upload a CSV file."
-    except Exception as e:
-        st.error(f"Error loading and formatting CSV file: {e}")
-        return ""
+    # Formatting the output text
+    text = f"savings: ${savings:.2f}\ncredit card debt: ${credit_card_debt:.2f}\nincome: ${income:.2f}"
+    return text
 
 def run10times(csv_file, chain):
     final_result = ""
