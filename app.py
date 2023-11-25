@@ -140,17 +140,22 @@ REMEMBER: "next_inputs" is not the original input. It is modified to contain: th
         verbose=False,
     )
 
-class StreamlitCSVLoader(CSVLoader):
-    def __init__(self, file):
-        data = file.getvalue().decode("utf-8") 
-        super().__init__(StringIO(data))
-
 def loadCSVFile(uploaded_file):
-    loader = StreamlitCSVLoader(uploaded_file) 
-    data = loader.load()
-    text = data[0]["column1"]
-    return text
-
+    try:
+        if uploaded_file is not None:
+            # Read the uploaded CSV file into a DataFrame
+            df = pd.read_csv(uploaded_file)
+            
+            if not df.empty:
+                # Format the data as "label: value" pairs
+                formatted_text = "\n".join([f"{column}: ${value:,.2f}" for column, value in df.iloc[0].items()])
+                return formatted_text
+            else:
+                return "The uploaded CSV file is empty."
+        else:
+            return "Please upload a CSV file."
+    except Exception as e:
+        return f"Error loading and formatting CSV file: {e}"
 
 def run10times(csv_file, chain):
     final_result = ""
