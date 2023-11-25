@@ -143,17 +143,23 @@ REMEMBER: "next_inputs" is not the original input. It is modified to contain: th
 
 def loadCSVFile(uploaded_file):
     try:
-        # Convert Streamlit UploadedFile to a string buffer
-        string_buffer = StringIO(uploaded_file.getvalue().decode("utf-8"))
+        # Create a temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".csv") as tmp_file:
+            # Write the content of the uploaded file to the temporary file
+            tmp_file.write(uploaded_file.getvalue())
+            tmp_file_path = tmp_file.name
 
-        # Assuming CSVLoader can handle string buffer
-        loader = CSVLoader(string_buffer)
+        # Now use this temporary file path with CSVLoader
+        loader = CSVLoader(tmp_file_path)
         data = loader.load()
 
         text = data[0]['page_content']  # Adjust based on actual data structure
+
+        # Clean up: Remove the temporary file
+        os.remove(tmp_file_path)
+
         return text
     except Exception as e:
-        # Log the exception for debugging
         st.error(f"Error processing file: {e}")
         return None
 
