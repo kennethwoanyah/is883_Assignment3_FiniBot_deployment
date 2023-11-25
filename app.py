@@ -50,28 +50,29 @@ def process_spreadsheet(df, experience_level):
 def main():
     st.header("Welcome to FiniBot Financial Advisory! Please upload your financial spreadsheet. [Link to template]")
 
-    # File uploader for the spreadsheet
     uploaded_file = st.file_uploader("Upload spreadsheet", type=['csv', 'xlsx'])
 
-    # Radio button for selecting experience level
-    experience_level = st.radio("Select your experience level:", ("Novice", "Expert"))
-
     if uploaded_file is not None:
-        try:
-            df = pd.read_csv(uploaded_file)
-            processed_text = loadCSVFile(df)
-            st.text(processed_text)
+        # Check if the file is not empty
+        if uploaded_file.getvalue().strip():
+            try:
+                # Assuming the file is a CSV
+                df = pd.read_csv(uploaded_file)
 
-            # Process the spreadsheet and generate financial analysis
-            analysis, recommendation = process_spreadsheet(df, experience_level)
+                # Additional checks can be placed here to ensure the DataFrame is not empty
+                if df.empty:
+                    st.error("The uploaded file is empty.")
+                else:
+                    processed_text = loadCSVFile(df)
+                    st.text(processed_text)
 
-            # Display the analysis and recommendation
-            st.markdown("### FiniBot Analysis and Recommendation")
-            st.markdown(f"**Analysis:** {analysis}")
-            st.markdown(f"**Recommendation:** {recommendation}")
+                    # Rest of your processing and display logic...
 
-        except Exception as e:
-            st.error(f"An error occurred while processing the file: {e}")
+            except Exception as e:
+                st.error(f"An error occurred while processing the file: {e}")
+        else:
+            st.error("The uploaded file is empty or not in the expected format.")
+
 
 if __name__ == "__main__":
     main()
