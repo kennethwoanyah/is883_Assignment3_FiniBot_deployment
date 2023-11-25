@@ -142,13 +142,21 @@ REMEMBER: "next_inputs" is not the original input. It is modified to contain: th
     )
 
 def loadCSVFile(uploaded_file):
-    loader = CSVLoader(uploaded_file)
-    data = loader.load()
+    try:
+        # Convert Streamlit UploadedFile to a string buffer
+        string_buffer = StringIO(uploaded_file.getvalue().decode("utf-8"))
 
-    # Assuming 'data' is a list and 'page_content' is a key
-    # Modify this part based on the actual structure of 'data'
-    text = data[0]['page_content']  # Adjust based on actual data structure
-    return text
+        # Assuming CSVLoader can handle string buffer
+        loader = CSVLoader(string_buffer)
+        data = loader.load()
+
+        text = data[0]['page_content']  # Adjust based on actual data structure
+        return text
+    except Exception as e:
+        # Log the exception for debugging
+        st.error(f"Error processing file: {e}")
+        return None
+
 
 def run10times(csv_file, chain):
     final_result = ""
