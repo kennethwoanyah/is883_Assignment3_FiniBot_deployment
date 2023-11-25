@@ -171,29 +171,28 @@ def run10times(csv_file, chain):
     #final_result += result + "\n"
     return result
 
-def process_financial_data(text, level):
+def process_financial_data(text):
+    # Split the text by comma and strip whitespace and dollar signs
+    values = [v.strip().replace('$', '').replace(',', '') for v in text.split(',')]
+
+    # Initialize default values
     total_savings = "0"
     monthly_debt = "0"
     monthly_income = "0"
 
-    for line in text.split('\n'):
-        if 'total_savings' in line:  # Adjust the condition to match your data format
-            total_savings = line.split(':')[1].strip().replace('$', '').replace(',', '')
-        elif 'monthly_debt' in line:  # Adjust the condition to match your data format
-            monthly_debt = line.split(':')[1].strip().replace('$', '').replace(',', '')
-        elif 'monthly_income' in line:  # Adjust the condition to match your data format
-            monthly_income = line.split(':')[1].strip().replace('$', '').replace(',', '')
-
+    # Assign values based on the input text
     try:
-        total_savings = float(total_savings)
-        monthly_debt = float(monthly_debt)
-        monthly_income = float(monthly_income)
+        if len(values) > 0:
+            total_savings = float(values[0])
+        if len(values) > 1:
+            monthly_debt = float(values[1])
+        if len(values) > 2:
+            monthly_income = float(values[2])
     except ValueError as e:
         st.error(f"Error processing financial data: {e}")
         return None, None, None
 
     return total_savings, monthly_debt, monthly_income
-
 
 def main():
     st.header("Welcome to FiniBot Financial Advisory! Please upload your financial spreadsheet.")
