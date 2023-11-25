@@ -141,11 +141,37 @@ REMEMBER: "next_inputs" is not the original input. It is modified to contain: th
     )
 
 def loadCSVFile(uploaded_file):
-    loader = CSVLoader(uploaded_file)
-    data = loader.load()    
-    text = data[0].page_content
-    return text
+    try:
+        if uploaded_file is not None:
+            # Create a temporary directory to save the uploaded file
+            temp_dir = tempfile.TemporaryDirectory()
+            temp_csv_path = os.path.join(temp_dir.name, uploaded_file.name)
 
+            # Save the uploaded file to the temporary directory
+            with open(temp_csv_path, "wb") as f:
+                f.write(uploaded_file.read())
+
+            # Load the CSV file using CSVLoader
+            loader = CSVLoader(temp_csv_path)
+            data = loader.load()
+
+            # Extract the relevant values from the data
+            total_savings = data[0].savings
+            monthly_debt = data[0].credit_card_debt
+            monthly_income = data[0].income
+
+            # Format the data as desired
+            formatted_text = f"savings: ${total_savings:.2f}\ncredit card debt: ${monthly_debt:.2f}\nincome: ${monthly_income:.2f}"
+
+            # Close and clean up the temporary directory
+            temp_dir.cleanup()
+
+            return formatted_text
+        else:
+            return "Please upload a CSV file."
+    except Exception as e:
+        st.error(f"Error loading and formatting CSV file: {e}")
+        return ""
 
 def run10times(csv_file, chain):
     final_result = ""
