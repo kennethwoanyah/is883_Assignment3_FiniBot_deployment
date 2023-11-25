@@ -171,7 +171,7 @@ def run10times(csv_file, chain):
     #final_result += result + "\n"
     return result
 
-def process_financial_data(text):
+def process_financial_data(text,level):
     # Split the text by comma and strip whitespace and dollar signs
     values = [v.strip().replace('$', '').replace(',', '') for v in text.split(',')]
 
