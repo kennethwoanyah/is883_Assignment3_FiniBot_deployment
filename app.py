@@ -213,7 +213,7 @@ def main():
 # Iterate over rows
         for index, row in df.iterrows():
     # For each row, concatenate column values to the text string
-             row_text = ' '.join(str(value) for value in row)
+             row_text = ', '.join(str(value) for value in row)
              text += row_text + '\n'  # Add a newline character to separate rows
 
 
