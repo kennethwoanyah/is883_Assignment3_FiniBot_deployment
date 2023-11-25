@@ -14,8 +14,20 @@ openai.api_key = open_AI_key
 
 ### Here, with some adjustments, copy-paste the code you developed for Question 1 in Assignment 3 
 ##########################################################################
+# Function to load and process the CSV file
+def loadCSVFile(csv_file):
+    # Read the CSV file into a DataFrame
+    df = pd.read_csv(csv_file)
 
-st.text('Fixed width text')
+    # Extract required fields
+    savings = df['savings'].iloc[0]
+    credit_card_debt = df['credit_card_debt'].iloc[0]
+    income = df['income'].iloc[0]
+
+    # Format the extracted data
+    formatted_text = f"savings: ${savings:.2f}\ncredit card debt: ${credit_card_debt:.2f}\nincome: ${income:.2f}"
+    return formatted_text
+
 ##########################################################################
 
 
@@ -40,6 +52,11 @@ def main():
     if uploaded_file is not None:
         df = pd.read_csv(uploaded_file)  # Adjust this line if your spreadsheet is in a different format
         st.dataframe(df)  # Displaying the spreadsheet
+        processed_text = loadCSVFile(uploaded_file)
+        st.text(processed_text)
+
+        print(processed_text)
+
 
         # Process the spreadsheet and generate financial analysis
         analysis, recommendation = process_spreadsheet(df, experience_level)
@@ -52,6 +69,8 @@ def main():
 # Function to process the spreadsheet and generate analysis and recommendation
 # This is a placeholder function, you need to integrate the logic from your Jupyter notebook here.
 def process_spreadsheet(df, experience_level):
+
+  
     # Process the dataframe as per the logic in the Jupyter notebook
     # For example, calculate total savings, monthly debt, and monthly income, etc.
     # Then, based on these calculations and the experience level, generate the analysis and recommendation.
