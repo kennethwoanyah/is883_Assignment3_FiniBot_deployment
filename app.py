@@ -23,11 +23,15 @@ openai.api_key = open_AI_key
 def loadCSVFile(uploaded_file):
     
 
-    if uploaded_file.type == "text/csv":
-        df = pd.read_csv(uploaded_file)
-    elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-        df = pd.read_excel(uploaded_file)
+       # Save the uploaded file to a temporary file
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.csv') as tmp_file:
+        tmp_file.write(uploaded_file.getvalue())
+        tmp_file_path = tmp_file.name
 
+    # Now read the file from the temporary location
+    df = pd.read_csv(tmp_file_path)
+
+    # Convert DataFrame to string (or process as needed)
     text = df.to_string(index=False)
     return text
 
