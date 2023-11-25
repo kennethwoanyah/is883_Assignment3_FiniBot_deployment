@@ -18,6 +18,8 @@ print(os.environ.get("OPENAI_API_KEY"))
 open_AI_key = os.environ.get('OPENAI_API_KEY')
 openai.api_key = open_AI_key
 
+uploaded_file = ""
+
 
 
 
@@ -146,10 +148,20 @@ REMEMBER: "next_inputs" is not the original input. It is modified to contain: th
 
 
 def loadCSVFile(csv_file):
-    loader = CSVLoader(csv_file)
+  # Create a temporary file
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".csv") as tmp_file:
+        # Copy the contents of the uploaded file to the temporary file
+        shutil.copyfileobj(uploaded_file, tmp_file)
+        tmp_file_path = tmp_file.name
+
+    # Now you can use the file path with CSVLoader
+    loader = CSVLoader(tmp_file_path)
     data = loader.load()
-    text = data[0]['page_content']  # Assuming the data is a list of dictionaries
-    return text
+    text = data[0]['page_content']
+    
+    # Optionally delete the temporary file if no longer needed
+    # os.remove(tmp_file_path)
+
 
  
 def run10times(csv_file, chain):
