@@ -7,6 +7,11 @@ from langchain.prompts import PromptTemplate
 from langchain.chains import ConversationChain, LLMChain
 from langchain.chains.router import MultiPromptChain, LLMRouterChain
 from langchain.chains.router.llm_router import RouterOutputParser
+import openai
+
+
+open_AI_key = os.environ.get('OPENAI_API_KEY')
+openai.api_key = open_AI_key
 
 
 
@@ -51,9 +56,20 @@ Here's the details provided {input}
 """ + Output_template  # Replace with your actual debt template
 
 def get_llm():
-    openai_api_key = os.environ.get("OPENAI_API_KEY")
-    llm = OpenAI(api_key=openai_api_key, model="text-davinci-003", temperature=0.8, max_tokens=150)
-    return llm
+    try:
+        # Initialize the LLM (Language Learning Model)
+        llm = OpenAI(api_key=openai.api_key,
+             model="text-davinci-003",
+             temperature=0.8,
+             max_tokens=150)
+
+        # Pass API key as a keyword argument
+        #llm = OpenAI(openai.api_key, model="text-davinci-003", temperature=0.8, max_tokens=150)
+        return llm
+    except Exception as e:
+        st.error(f"Failed to initialize OpenAI model: {e}")
+        return None
+
 
 def setup_financial_chains(llm, level):
     fin_routes = [
@@ -135,6 +151,12 @@ REMEMBER: "next_inputs" is not the original input. It is modified to contain: th
 def loadCSVFile(uploaded_file):
     text_io = StringIO(uploaded_file.getvalue().decode("utf-8"))
     df = pd.read_csv(text_io)
+
+    required_columns = {'savings', 'credit card debt', 'income'}
+    if not required_columns.issubset(df.columns):
+        st.error("CSV file must contain the following columns: savings, credit card debt, income.")
+        return None
+
     text = df.to_string(index=False)
     return text
 
@@ -145,7 +167,9 @@ def run10times(csv_file, chain):
         final_result += result + "\n"
     return final_result
 
-def process_financial_data(text, level):
+def process_financial_data(text):
+    total_savings = monthly_debt = monthly_income = None
+
     for line in text.split('\n'):
         if 'savings:' in line:
             total_savings = line.split(':')[1].strip().replace('$', '').replace(',', '')
@@ -154,11 +178,17 @@ def process_financial_data(text, level):
         elif 'income:' in line:
             monthly_income = line.split(':')[1].strip().replace('$', '').replace(',', '')
 
-    total_savings = float(total_savings)
-    monthly_debt = float(monthly_debt)
-    monthly_income = float(monthly_income)
+    try:
+        total_savings = float(total_savings) if total_savings else 0.0
+        monthly_debt = float(monthly_debt) if monthly_debt else 0.0
+        monthly_income = float(monthly_income) if monthly_income else 0.0
+    except ValueError as e:
+        print(f"Error converting financial data: {e}")  # For debugging
+        st.error("Error converting financial data. Please check the format of your input.")
+        return None, None, None
 
     return total_savings, monthly_debt, monthly_income
+
 
 def main():
     st.header("Welcome to FiniBot Financial Advisory! Please upload your financial spreadsheet.")
@@ -168,8 +198,17 @@ def main():
 
     if uploaded_file is not None:
         text = loadCSVFile(uploaded_file)
-        total_savings, monthly_debt, monthly_income = process_financial_data(text, level)
+        if text is not None:
+            total_savings, monthly_debt, monthly_income = process_financial_data(text)
+            if total_savings is not None:
+                # Display financial data using bar charts
+                st.bar_chart(pd.DataFrame({
+                    "Amount": [total_savings, monthly_debt, monthly_income],
+                    "Type": ["Total Savings", "Monthly Debt", "Monthly Income"]
+                }))
 
+
+        print(text+":)")
         llm = get_llm()
         financial_chain = setup_financial_chains(llm, level)
         result = run10times(text, financial_chain)
@@ -187,3 +226,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
