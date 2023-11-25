@@ -186,7 +186,7 @@ def main():
     if uploaded_file is not None:
         df = pd.read_csv(uploaded_file)  # Adjust this line if your spreadsheet is in a different format
         st.dataframe(df)  # Displaying the spreadsheet
-        
+
         text = loadCSVFile(uploaded_file)
         print(text+":))))))")
 
@@ -197,7 +197,7 @@ def main():
         financial_chain = setup_financial_chains(llm, level)
         result = run10times(text, financial_chain)
 
-        st.dataframe(uploaded_file)
+       
 
         st.markdown("### Financial Summary")
         st.markdown(f"- Total savings: ${total_savings}")
