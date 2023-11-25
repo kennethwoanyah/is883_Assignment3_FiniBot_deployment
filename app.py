@@ -7,59 +7,15 @@ from langchain.prompts import PromptTemplate
 from langchain.chains import ConversationChain, LLMChain
 from langchain.chains.router import MultiPromptChain, LLMRouterChain
 from langchain.chains.router.llm_router import RouterOutputParser
-import openai
 
-
-open_AI_key = os.environ.get('OPENAI_API_KEY')
-openai.api_key = open_AI_key
-
-
-
-Output_template = """
- Format the output nicely into this template.
-
-------------
- Summary
-------------
-
- - Total savings:  {input}
- - Monthly debt: {input}
- - Monthly income: {input}
-
-------------
- Financial situation:
- ------------
-
-
-------------
-Recommendation:
-------------
-
-
-
-
-"""
 # Define your investment and debt templates (placeholders here)
-investment_template = """
-You are a highly knowledgeable investment advisor. You excel at providing clear and succinct advice on financial matters. When faced with a question you're unsure about, you honestly acknowledge your uncertainty.
-advise to invest  money and provide an investment portfolio based on savings and using 5 stocks.
-Give advice based on the following details: {input}
-
-""" + Output_template  # Replace with your actual investment template
-
-
-debt_template = debt_template= """
-You are a courteous and considerate debt advisor. Your approach involves tactfully and sensitively informing clients about their financial situations, avoiding any guilt-tripping. You then transition into planning mode, creating a strategy for clients to pay off their debts. This plan includes allocating 10% of their income for monthly debt payments.
-
-Here's the details provided {input}
-
-""" + Output_template  # Replace with your actual debt template
+investment_template = "..."  # Replace with your actual investment template
+debt_template = "..."  # Replace with your actual debt template
 
 def get_llm():
     openai_api_key = os.environ.get("OPENAI_API_KEY")
     llm = OpenAI(api_key=openai_api_key, model="text-davinci-003", temperature=0.8, max_tokens=150)
     return llm
-
 
 def setup_financial_chains(llm, level):
     fin_routes = [
@@ -88,34 +44,7 @@ def setup_financial_chains(llm, level):
     Now, let's summarize your financial status.
     """
 
-    MULTI_PROMPT_ROUTER_TEMPLATE = """\
-    Given a raw text input to a language model select the model prompt best suited for \
-the input. You will be given the names of the available prompts and a description of \
-what the prompt is best suited for. You may also revise the original input if you \
-think that revising it will ultimately lead to a better response from the language \
-model.
-
-<< FORMATTING >>
-Return a markdown code snippet with a JSON object formatted to look like:
-```json
-{{{{
-    "destination": string \ name of the prompt to use or "DEFAULT"
-    "next_inputs": string \ a modified version of the original input. It is modified to contai only: the "savings" value, the "debt" value, the "income" value, and the "summary" provided above.
-}}}}
-```
-
-REMEMBER: "destination" MUST be one of the candidate prompt names specified below OR \
-it can be "DEFAULT" if the input is not well suited for any of the candidate prompts.
-REMEMBER: "next_inputs" is not the original input. It is modified to contain: the "savings" value, the "debt" value, the "income" value, and the "summary" provided above.
-
-<< CANDIDATE PROMPTS >>
-{destinations}
-
-<< INPUT >>
-{{input}}
-
-<< OUTPUT (must include ```json at the start of the response) >>
-<< OUTPUT (must end with ```) >>
+    MULTI_PROMPT_ROUTER_TEMPLATE = """
     ...  # Your MULTI_PROMPT_ROUTER_TEMPLATE content
     """
 
@@ -141,12 +70,6 @@ REMEMBER: "next_inputs" is not the original input. It is modified to contain: th
 def loadCSVFile(uploaded_file):
     text_io = StringIO(uploaded_file.getvalue().decode("utf-8"))
     df = pd.read_csv(text_io)
-
-    required_columns = {'savings', 'credit card debt', 'income'}
-    if not required_columns.issubset(df.columns):
-        st.error("CSV file must contain the following columns: savings, credit card debt, income.")
-        return None
-
     text = df.to_string(index=False)
     return text
 
@@ -157,9 +80,7 @@ def run10times(csv_file, chain):
         final_result += result + "\n"
     return final_result
 
-def process_financial_data(text):
-    total_savings = monthly_debt = monthly_income = None
-
+def process_financial_data(text, level):
     for line in text.split('\n'):
         if 'savings:' in line:
             total_savings = line.split(':')[1].strip().replace('$', '').replace(',', '')
@@ -168,17 +89,11 @@ def process_financial_data(text):
         elif 'income:' in line:
             monthly_income = line.split(':')[1].strip().replace('$', '').replace(',', '')
 
-    try:
-        total_savings = float(total_savings) if total_savings else 0.0
-        monthly_debt = float(monthly_debt) if monthly_debt else 0.0
-        monthly_income = float(monthly_income) if monthly_income else 0.0
-    except ValueError as e:
-        print(f"Error converting financial data: {e}")  # For debugging
-        st.error("Error converting financial data. Please check the format of your input.")
-        return None, None, None
+    total_savings = float(total_savings)
+    monthly_debt = float(monthly_debt)
+    monthly_income = float(monthly_income)
 
     return total_savings, monthly_debt, monthly_income
-
 
 def main():
     st.header("Welcome to FiniBot Financial Advisory! Please upload your financial spreadsheet.")
@@ -188,17 +103,8 @@ def main():
 
     if uploaded_file is not None:
         text = loadCSVFile(uploaded_file)
-        if text is not None:
-            total_savings, monthly_debt, monthly_income = process_financial_data(text)
-            if total_savings is not None:
-                # Display financial data using bar charts
-                st.bar_chart(pd.DataFrame({
-                    "Amount": [total_savings, monthly_debt, monthly_income],
-                    "Type": ["Total Savings", "Monthly Debt", "Monthly Income"]
-                }))
+        total_savings, monthly_debt, monthly_income = process_financial_data(text, level)
 
-
-        print(text+":)")
         llm = get_llm()
         financial_chain = setup_financial_chains(llm, level)
         result = run10times(text, financial_chain)
@@ -216,4 +122,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
