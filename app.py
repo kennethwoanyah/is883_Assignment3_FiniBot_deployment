@@ -8,6 +8,7 @@ from langchain.chains import ConversationChain, LLMChain
 from langchain.chains.router import MultiPromptChain, LLMRouterChain
 from langchain.chains.router.llm_router import RouterOutputParser
 import openai
+import tempfile
 from langchain.document_loaders import CSVLoader
 
 print(os.environ.get("OPENAI_API_KEY"))
