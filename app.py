@@ -8,7 +8,7 @@ from langchain.chains import ConversationChain, LLMChain
 from langchain.chains.router import MultiPromptChain, LLMRouterChain
 from langchain.chains.router.llm_router import RouterOutputParser
 import openai
-
+from langchain.document_loaders import CSVLoader
 
 print(os.environ.get("OPENAI_API_KEY"))
 
@@ -141,17 +141,10 @@ REMEMBER: "next_inputs" is not the original input. It is modified to contain: th
     )
 
 def loadCSVFile(uploaded_file):
-    try:
-        # Read the uploaded CSV file into a DataFrame
-        df = pd.read_csv(uploaded_file)
-        
-        # Format the data as "label: value" pairs
-        formatted_text = "\n".join([f"{column}: ${value:,.2f}" for column, value in df.iloc[0].items()])
-        
-        return formatted_text
-    except Exception as e:
-        st.error(f"Error loading and formatting CSV file: {e}")
-        return ""
+    loader = CSVLoader(uploaded_file)
+    data = loader.load()
+    text = data[0].page_content
+    return text
 
 
 def run10times(csv_file, chain):
