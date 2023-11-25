@@ -144,20 +144,12 @@ REMEMBER: "next_inputs" is not the original input. It is modified to contain: th
     )
 
 
-def loadCSVFile(uploaded_file):
-    # Create a temporary file
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".csv") as tmp_file:
-        # Write the content of the uploaded file to the temporary file
-        shutil.copyfileobj(uploaded_file, tmp_file)
-        tmp_file_path = tmp_file.name
 
-    # Now use this temporary file path with CSVLoader
-    loader = CSVLoader(tmp_file_path)
+def loadCSVFile(csv_file):
+    loader = CSVLoader(csv_file)
     data = loader.load()
-    text = data[0].page_content
-
-    # Optionally delete the temporary file here if no longer needed
-    # os.remove(tmp_file_path)
+    text = data[0]['page_content']  # Assuming the data is a list of dictionaries
+    return text
 
     return text
 def run10times(csv_file, chain):
