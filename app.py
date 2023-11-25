@@ -190,6 +190,8 @@ def main():
         text = loadCSVFile(uploaded_file)
         print(text+":))))))")
 
+        st.markdown(text)
+
 
         total_savings, monthly_debt, monthly_income = process_financial_data(text, level)
 
