@@ -18,7 +18,7 @@ print(os.environ.get("OPENAI_API_KEY"))
 open_AI_key = os.environ.get('OPENAI_API_KEY')
 openai.api_key = open_AI_key
 
-uploaded_file = ""
+
 
 
 
@@ -205,7 +205,18 @@ def main():
         df = pd.read_csv(uploaded_file)  # Adjust this line if your spreadsheet is in a different format
         st.dataframe(df)  # Displaying the spreadsheet
 
-        text = loadCSVFile(uploaded_file)
+       # text = loadCSVFile(uploaded_file)
+
+# Initialize an empty string to store text
+        text = ""
+
+# Iterate over rows
+        for index, row in df.iterrows():
+    # For each row, concatenate column values to the text string
+             row_text = ' '.join(str(value) for value in row)
+             text += row_text + '\n'  # Add a newline character to separate rows
+
+
         st.markdown(text)
 
        
