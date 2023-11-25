@@ -145,7 +145,7 @@ REMEMBER: "next_inputs" is not the original input. It is modified to contain: th
 def loadCSVFile(uploaded_file):
     try:
         # Read the CSV file into a Pandas DataFrame
-        df = pd.read_csv(file_like_object)
+        df = pd.read_csv(uploaded_file)
 
         # Extracting the values from the first row
         savings = df.at[0, 'savings']
@@ -158,7 +158,7 @@ def loadCSVFile(uploaded_file):
     except Exception as e:
         raise Exception(f"Error processing CSV file: {e}")
     
-    
+
 def run10times(csv_file, chain):
     final_result = ""
     #for _ in range(10):
