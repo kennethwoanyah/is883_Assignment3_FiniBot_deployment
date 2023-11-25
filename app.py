@@ -23,8 +23,10 @@ openai.api_key = open_AI_key
 def loadCSVFile(uploaded_file):
     
 
-    df = pd.read_csv(uploaded_file)
-    text_io = StringIO(uploaded_file.getvalue().decode("utf-8"))
+    if uploaded_file.type == "text/csv":
+        df = pd.read_csv(uploaded_file)
+    elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+        df = pd.read_excel(uploaded_file)
 
     text = df.to_string(index=False)
     return text
