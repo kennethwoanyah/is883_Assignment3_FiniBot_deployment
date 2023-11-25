@@ -10,8 +10,8 @@ from langchain.chains.router.llm_router import RouterOutputParser
 import openai
 import tempfile
 import shutil
-from langchain.document_loaders import CSVLoader
 
+from langchain.document_loaders.csv_loader import CSVLoader
 
 print(os.environ.get("OPENAI_API_KEY"))
 
