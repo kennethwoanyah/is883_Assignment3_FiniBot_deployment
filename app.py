@@ -196,9 +196,9 @@ def main():
         st.dataframe(df)  # Displaying the spreadsheet
 
         text = loadCSVFile(uploaded_file)
-        print(text+":))))))")
-
         st.markdown(text)
+
+       
 
 
         total_savings, monthly_debt, monthly_income = process_financial_data(text, level)
