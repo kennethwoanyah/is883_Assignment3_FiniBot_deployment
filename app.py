@@ -141,17 +141,17 @@ REMEMBER: "next_inputs" is not the original input. It is modified to contain: th
     )
 
 def loadCSVFile(uploaded_file):
-    text_io = StringIO(uploaded_file.getvalue().decode("utf-8"))
-    df = pd.read_csv(text_io)
-    
     try:
+        # Read the uploaded CSV file into a DataFrame
+        df = pd.read_csv(uploaded_file)
+        
         # Format the data as "label: value" pairs
         formatted_text = "\n".join([f"{column}: ${value:,.2f}" for column, value in df.iloc[0].items()])
+        
+        return formatted_text
     except Exception as e:
-        print(f"Error formatting CSV data: {e}")
-        formatted_text = ""
-
-    return formatted_text
+        st.error(f"Error loading and formatting CSV file: {e}")
+        return ""
 
 
 def run10times(csv_file, chain):
