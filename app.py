@@ -144,11 +144,14 @@ def loadCSVFile(uploaded_file):
     text_io = StringIO(uploaded_file.getvalue().decode("utf-8"))
     df = pd.read_csv(text_io)
     
-    # Format the data as "label: value" pairs
-    formatted_text = "\n".join([f"{column}: ${value:,.2f}" for column, value in df.iloc[0].items()])
+    try:
+        # Format the data as "label: value" pairs
+        formatted_text = "\n".join([f"{column}: ${value:,.2f}" for column, value in df.iloc[0].items()])
+    except Exception as e:
+        print(f"Error formatting CSV data: {e}")
+        formatted_text = ""
 
     return formatted_text
-
 
 
 def run10times(csv_file, chain):
